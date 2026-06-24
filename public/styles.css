@@ -1,0 +1,199 @@
+:root {
+  --green: #03ac13;
+  --green-dark: #02860f;
+  --green-soft: #effcf1;
+  --green-border: #cbeecf;
+  --ink: #163020;
+  --muted: #5c6f63;
+  --bg: #f6fbf7;
+  --card: #ffffff;
+  --line: #dbe7de;
+  --danger: #b42318;
+  --warn: #b54708;
+  --shadow: 0 14px 32px rgba(3, 172, 19, 0.08);
+  font-family: Inter, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: linear-gradient(180deg, #f4fbf5 0%, #f8fbf8 180px, #f6fbf7 100%); }
+.hero {
+  display: flex; justify-content: space-between; gap: 20px; align-items: center;
+  padding: 22px 28px; background: #fff; border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 10; backdrop-filter: blur(8px);
+}
+.brand-wrap { display: flex; align-items: center; gap: 16px; }
+.logo-mark { width: 58px; height: 58px; border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); }
+.hero h1 { margin: 0; font-size: 2rem; }
+.subhead { margin: 6px 0 0; color: var(--muted); max-width: 780px; }
+.status-pill {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+  border-radius: 999px; font-weight: 700; background: #e8f9ea; color: var(--green-dark);
+  border: 1px solid var(--green-border);
+}
+.status-pill.offline { background: #fff4e5; color: var(--warn); border-color: #f4d9ae; }
+.layout { width: min(1240px, calc(100% - 32px)); margin: 24px auto 40px; }
+.summary-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 18px; }
+.summary-card {
+  background: linear-gradient(180deg, #fff, #f8fff9); border: 1px solid var(--line); border-radius: 18px;
+  padding: 16px 18px; box-shadow: var(--shadow);
+}
+.summary-label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: 6px; }
+.panel {
+  background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 22px;
+  box-shadow: var(--shadow); margin-bottom: 18px;
+}
+.panel-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.panel h2 { margin: 0; font-size: 1.7rem; }
+.panel p { margin: 8px 0 0; color: var(--muted); }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 18px; }
+.compact-grid { grid-template-columns: minmax(280px, 420px); }
+label { display: flex; flex-direction: column; gap: 8px; font-weight: 700; color: #254233; }
+input, select, textarea {
+  width: 100%; padding: 13px 14px; border: 1px solid #cfe2d3; border-radius: 14px; background: #fff;
+  font: inherit; color: var(--ink); outline: none; transition: .15s ease;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 4px rgba(3, 172, 19, 0.12); }
+textarea { min-height: 88px; resize: vertical; }
+.wide { grid-column: 1 / -1; }
+.action-row { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 12px; }
+button {
+  border: 0; background: var(--green); color: #fff; padding: 13px 20px; border-radius: 14px;
+  font-weight: 800; cursor: pointer; transition: .15s ease; box-shadow: 0 8px 20px rgba(3,172,19,.18);
+}
+button:hover { background: var(--green-dark); transform: translateY(-1px); }
+.result-box {
+  margin-top: 16px; background: #fbfffb; border: 1px solid var(--line); border-radius: 18px;
+  padding: 16px; min-height: 64px;
+}
+.result-box.empty { color: var(--muted); }
+.result-box pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.notice { border-left: 5px solid var(--green); padding-left: 12px; }
+.notice.warn { border-left-color: var(--warn); background: #fffaf1; }
+.notice.danger { border-left-color: var(--danger); background: #fff5f5; }
+.result-title { margin: 0 0 8px; font-size: 1.1rem; }
+.result-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 12px; }
+.chip {
+  background: #effcf1; color: var(--green-dark); border: 1px solid var(--green-border);
+  padding: 7px 10px; border-radius: 999px; font-weight: 700; font-size: .92rem;
+}
+.chip.warn { background: #fff4e5; color: var(--warn); border-color: #f4d9ae; }
+.chip.danger { background: #fff0f0; color: var(--danger); border-color: #f2c4c4; }
+.qr-card { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.qr { width: 170px; height: 170px; border-radius: 18px; border: 1px solid var(--line); background: #fff; padding: 8px; }
+.sms-box, .ai-box {
+  background: linear-gradient(180deg, #ffffff, #f7fff8);
+  border: 1px solid var(--green-border); border-radius: 18px; padding: 16px;
+}
+.sms-preview {
+  background: #fff; border: 1px dashed #bfe3c4; padding: 14px; border-radius: 14px; margin-top: 10px;
+}
+.kv { display: grid; grid-template-columns: 180px 1fr; gap: 8px 14px; }
+.kv div:nth-child(odd) { font-weight: 800; color: #274537; }
+table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: .95rem; }
+td, th { border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: #f3fcf5; }
+.profile-box > *:first-child { margin-top: 0; }
+.section-spacer { height: 6px; }
+@media (max-width: 900px) {
+  .hero { flex-direction: column; align-items: flex-start; }
+  .summary-bar { grid-template-columns: 1fr; }
+  .kv { grid-template-columns: 1fr; }
+  .compact-grid { grid-template-columns: 1fr; }
+}
+
+
+/* Native datalist fields: previous simpler dropdown behavior */
+input[list] {
+  background-color: #ffffff;
+}
+
+/* Thin text outline for better green button readability */
+button {
+  -webkit-text-stroke: 0.25px rgba(0, 0, 0, 0.45);
+  text-shadow:
+    0 0 1px rgba(0, 0, 0, 0.55),
+    0 1px 1px rgba(0, 0, 0, 0.20);
+  letter-spacing: 0.2px;
+}
+
+.chip,
+.status-pill {
+  -webkit-text-stroke: 0.12px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 0 0.4px rgba(0, 0, 0, 0.25);
+}
+
+/* Remove section subheaders/descriptions */
+.panel-head p {
+  display: none;
+}
+
+.panel-head {
+  margin-bottom: 14px;
+}
+
+
+/* Clean modern font across full VaxID app */
+* {
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
+/* Remove ugly monospace look from AI/SMS outputs */
+pre,
+code,
+.vaxid-pretty-body,
+.ai-box,
+.sms-box,
+.notice,
+.result-card,
+.profile-table,
+table,
+td,
+th {
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif !important;
+  letter-spacing: 0.01em;
+}
+
+/* Make generated output easier to read */
+.vaxid-pretty-body,
+.notice,
+.ai-box,
+.sms-box {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+/*
+
+
+/* Clean modern font across full VaxID app */
+* {
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
+/* Remove ugly monospace look from AI/SMS outputs */
+pre,
+code,
+.vaxid-pretty-body,
+.ai-box,
+.sms-box,
+.notice,
+.result-card,
+.profile-table,
+table,
+td,
+th {
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif !important;
+  letter-spacing: 0.01em;
+}
+
+/* Make generated output easier to read */
+.vaxid-pretty-body,
+.notice,
+.ai-box,
+.sms-box {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+/*

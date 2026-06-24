@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VaxID Bangladesh</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>VaxID Bangladesh</h1>
+      <p>Birth-linked QR health ID, vaccination tracking, AI review, ML risk scoring, and offline clinic updates.</p>
+    </div>
+    <span id="connectionStatus" class="badge">Checking connection...</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1. Register child during birth certificate process</h2>
+      <div class="grid">
+        <label>Child name <input id="childName" value="Ayaan Rahman" /></label>
+        <label>Birth certificate no. <input id="birthCertificateNo" value="BC-2026-0001" /></label>
+        <label>Date of birth <input id="dob" type="date" /></label>
+        <label>Parent name <input id="parentName" value="Mr. Rahman" /></label>
+        <label>Parent phone <input id="parentPhone" value="01700000000" /></label>
+        <label>Preferred clinic/hospital <input id="preferredClinic" value="Kaliganj EPI Center" /></label>
+        <label>Area <input id="area" value="Kaliganj" /></label>
+        <label>Opt in vaccination program
+          <select id="optedInVaccination">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </label>
+      </div>
+      <button id="registerChildBtn">Register child + generate QR</button>
+      <div id="registerResult" class="result"></div>
+    </section>
+
+    <section class="card">
+      <h2>2. Offline clinic update: mark vaccination completed/missed</h2>
+      <p class="hint">This writes directly to Firestore. If the clinic computer is offline, Firestore stores the change locally and syncs when online again.</p>
+      <div class="grid">
+        <label>Child ID <input id="vaxChildId" placeholder="CH-..." /></label>
+        <label>Vaccine name <input id="vaccineName" value="Pentavalent-1" /></label>
+        <label>Due date <input id="vaccineDueDate" type="date" /></label>
+        <label>Completed date <input id="vaccineCompletedDate" type="date" /></label>
+        <label>Status
+          <select id="vaccineStatus">
+            <option value="completed">completed</option>
+            <option value="due">due</option>
+            <option value="missed">missed</option>
+            <option value="review_required">review_required</option>
+          </select>
+        </label>
+      </div>
+      <button id="saveVaccinationBtn">Save vaccination update</button>
+      <div id="vaccinationResult" class="result"></div>
+    </section>
+
+    <section class="card">
+      <h2>3. Add hospital diagnosis / health record</h2>
+      <div class="grid">
+        <label>Child ID <input id="healthChildId" placeholder="CH-..." /></label>
+        <label>Hospital name <input id="hospitalName" value="Dhaka Shishu Hospital" /></label>
+        <label>Visit date <input id="visitDate" type="date" /></label>
+        <label>Diagnosis <input id="diagnosis" value="Fever" /></label>
+        <label class="wide">Doctor notes <textarea id="doctorNotes">No severe allergy reported.</textarea></label>
+        <label class="wide">Medicine / treatment notes <textarea id="medicine">Paracetamol if prescribed by doctor.</textarea></label>
+      </div>
+      <button id="saveHealthBtn">Save lifelong hospital record</button>
+      <div id="healthResult" class="result"></div>
+    </section>
+
+    <section class="card">
+      <h2>4. Gemini AI + ML review</h2>
+      <p class="hint">The AI reads vaccination + hospital records and creates a safe message. It flags special vaccine/dose review for a doctor; it does not prescribe by itself.</p>
+      <div class="grid">
+        <label>Child ID <input id="aiChildId" placeholder="CH-..." /></label>
+      </div>
+      <button id="runAiReviewBtn">Run AI health/vaccine review</button>
+      <div id="aiResult" class="result"></div>
+    </section>
+
+    <section class="card">
+      <h2>5. Reminder message system</h2>
+      <div class="grid">
+        <label>Child ID <input id="reminderChildId" placeholder="CH-..." /></label>
+      </div>
+      <button id="generateReminderBtn">Generate SMS/text reminder</button>
+      <div id="reminderResult" class="result"></div>
+    </section>
+
+    <section class="card">
+      <h2>6. View child profile</h2>
+      <div class="grid">
+        <label>Child ID <input id="profileChildId" placeholder="CH-..." /></label>
+      </div>
+      <button id="loadProfileBtn">Load profile</button>
+      <div id="profileResult" class="result"></div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

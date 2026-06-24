@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // DEMO ONLY: open access makes the prototype easy to test.
+    // Before using real medical data, replace this with Firebase Authentication + hospital roles.
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

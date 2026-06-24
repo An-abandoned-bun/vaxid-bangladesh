@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VaxID Child Profile</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { background: #f7fff9; }
+    .profile-shell { max-width: 1180px; margin: 0 auto; padding: 28px 20px 48px; }
+    .profile-top { display: flex; justify-content: space-between; gap: 18px; align-items: center; margin-bottom: 20px; }
+    .profile-top h1 { margin: 0; color: var(--green-dark, #003b24); font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: 0.02em; }
+    .profile-top p { margin: 6px 0 0; color: var(--muted, #53625d); font-size: 1.05rem; }
+    .profile-card { background: #fff; border: 1px solid rgba(3,172,19,.16); border-left: 6px solid var(--green,#03ac13); border-radius: 22px; padding: 22px; box-shadow: 0 16px 38px rgba(0,80,30,.08); margin-bottom: 22px; }
+    .profile-main { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 22px; align-items: start; }
+    .scan-qr { width: 170px; height: 170px; border: 1px solid rgba(3,172,19,.18); border-radius: 16px; padding: 10px; background: #fff; }
+    .profile-kv { display: grid; grid-template-columns: 220px 1fr; gap: 10px 20px; font-size: 1.02rem; }
+    .profile-kv div:nth-child(odd) { font-weight: 850; color: var(--green-dark,#003b24); }
+    .section-title { margin: 26px 0 12px; font-size: 1.5rem; color: var(--green-dark,#003b24); }
+    .table-scroll { width: 100%; overflow-x: auto; background: #fff; border: 1px solid rgba(3,172,19,.12); border-radius: 18px; box-shadow: 0 12px 28px rgba(0,80,30,.06); }
+    .profile-table { width: 100%; min-width: 760px; border-collapse: collapse; }
+    .profile-table th, .profile-table td { text-align: left; padding: 13px 14px; border-bottom: 1px solid rgba(3,172,19,.10); vertical-align: top; white-space: normal; word-break: break-word; }
+    .profile-table th { background: #f1fbf4; color: var(--green-dark,#003b24); font-weight: 850; }
+    .profile-table tr:last-child td { border-bottom: 0; }
+    .empty-card { background: #fff; border: 1px dashed rgba(3,172,19,.24); border-radius: 16px; padding: 16px; color: var(--muted,#53625d); }
+    .profile-search { display: flex; gap: 10px; align-items: center; margin: 16px 0 24px; }
+    .profile-search input { max-width: 360px; }
+    @media (max-width: 760px) {
+      .profile-main { grid-template-columns: 1fr; }
+      .profile-kv { grid-template-columns: 1fr; }
+      .profile-kv div:nth-child(odd) { margin-top: 8px; }
+    }
+  </style>
+  <link rel="stylesheet" href="vaxid-force.css" />
+  <link rel="stylesheet" href="vaxid-pretty-output.css" />
+</head>
+<body>
+  <main class="profile-shell">
+    <header class="profile-top">
+      <div>
+        <h1>VaxID Bangladesh</h1>
+        <p>One child. One secure record. A healthier Bangladesh.</p>
+      </div>
+      <span id="profileStatus" class="status-pill">Loading profile...</span>
+    </header>
+
+    <section class="profile-search">
+      <input id="childIdInput" />
+      <button id="loadProfileBtn" type="button">Load Profile</button>
+    </section>
+
+    <div id="profileOutput"></div>
+  </main>
+
+  <script type="module" src="profile.js"></script>
+  <script type="module" src="vaxid-force.js"></script>
+</body>
+</html>

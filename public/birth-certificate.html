@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VaxID Birth Certificate</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { background: #eef8f1; color: #10251a; font-family: Arial, sans-serif; }
+    .cert-toolbar { max-width: 1000px; margin: 18px auto; display: flex; gap: 10px; justify-content: flex-end; padding: 0 14px; }
+    .cert-toolbar button { border: 0; border-radius: 12px; padding: 12px 16px; background: #03ac13; color: #fff; font-weight: 900; cursor: pointer; }
+    .cert-page { max-width: 1000px; margin: 0 auto 40px; background: #fff; border: 10px double #047d2a; padding: 34px 42px; min-height: 720px; position: relative; box-shadow: 0 18px 50px rgba(0,0,0,.12); }
+    .cert-page::after { content: "VaxID DEMO COPY - NOT A GOVERNMENT DOCUMENT"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(2rem, 5vw, 4.4rem); font-weight: 900; color: rgba(3, 172, 19, .085); transform: rotate(-24deg); text-align: center; pointer-events: none; }
+    .cert-inner { position: relative; z-index: 1; }
+    .cert-gov { text-align: center; border-bottom: 2px solid #047d2a; padding-bottom: 16px; margin-bottom: 24px; }
+    .cert-seal { width: 88px; height: 88px; border-radius: 50%; border: 3px solid #047d2a; display: inline-flex; align-items: center; justify-content: center; font-weight: 1000; color: #047d2a; margin-bottom: 10px; font-size: 1.1rem; }
+    .cert-gov h1 { margin: 3px 0; font-size: 1.25rem; color: #04391d; }
+    .cert-gov h2 { margin: 8px 0 0; font-size: 2.1rem; color: #047d2a; text-transform: uppercase; letter-spacing: .06em; }
+    .cert-gov p { margin: 4px 0; color: #41584b; }
+    .cert-grid { display: grid; grid-template-columns: 260px 1fr; border: 1px solid #b8d9c0; border-bottom: 0; }
+    .cert-label, .cert-value { padding: 13px 15px; border-bottom: 1px solid #b8d9c0; }
+    .cert-label { font-weight: 850; background: #f1fbf4; color: #04391d; border-right: 1px solid #b8d9c0; }
+    .cert-value { min-height: 22px; }
+    .cert-footer { display: grid; grid-template-columns: 1fr 1fr 140px; gap: 24px; margin-top: 42px; align-items: end; }
+    .sign-line { border-top: 1px solid #1f4d31; padding-top: 8px; text-align: center; color: #41584b; }
+    .cert-qr { width: 120px; height: 120px; justify-self: end; border: 1px solid #b8d9c0; padding: 6px; }
+    .cert-note { margin-top: 18px; border: 1px solid #ffd68a; background: #fff8e8; padding: 12px 14px; border-radius: 12px; color: #6b4a00; font-weight: 700; }
+    @media print {
+      body { background: #fff; }
+      .cert-toolbar, .vaxid-force-topbar, .vaxid-force-gate { display: none !important; }
+      .cert-page { margin: 0; max-width: none; box-shadow: none; border-width: 8px; min-height: auto; page-break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cert-toolbar">
+    <button id="printBtn" type="button">Print / Save PDF</button>
+    <button id="profileBtn" type="button">Open Child Profile</button>
+  </div>
+  <main id="certificateOutput" class="cert-page">
+    <div class="cert-inner">Loading certificate...</div>
+  </main>
+  <script type="module" src="birth-certificate.js"></script>
+</body>
+</html>

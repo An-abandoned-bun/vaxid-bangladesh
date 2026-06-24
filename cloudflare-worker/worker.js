@@ -2,7 +2,7 @@ export default {
   async fetch(request, env) {
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type"
     };
 
@@ -10,130 +10,115 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders });
     }
 
+    if (request.method === "GET") {
+      return json({
+        ok: true,
+        service: "VaxID Groq AI Worker",
+        message: "Worker is running. Send POST requests from the VaxID app."
+      }, 200, corsHeaders);
+    }
+
     if (request.method !== "POST") {
       return json({ ok: false, error: "Use POST only." }, 405, corsHeaders);
     }
 
     try {
-      if (!env.GEMINI_API_KEY) {
-        return json({ ok: false, error: "Missing GEMINI_API_KEY secret in Cloudflare Worker settings." }, 500, corsHeaders);
-      }
-
       const body = await request.json();
-      const mode = body.mode || "review";
+
+      const task = body.task || "Review the VaxID child vaccination and patient record safely.";
       const child = body.child || {};
-      const vaccinations = Array.isArray(body.vaccinations) ? body.vaccinations : [];
-      const healthRecords = Array.isArray(body.healthRecords) ? body.healthRecords : [];
+      const vaccinations = body.vaccinations || [];
+      const patientRecords = body.patientRecords || body.healthRecords || [];
+      const dueSummary = body.dueSummary || {};
       const risk = body.risk || {};
 
-      const model = env.GEMINI_MODEL || "gemini-2.5-flash-lite";
-      const prompt = buildPrompt(mode, child, vaccinations, healthRecords, risk);
+      const model = env.GROQ_MODEL || "llama-3.1-8b-instant";
 
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${env.GEMINI_API_KEY}`;
+      const systemPrompt = `
+You are the VaxID Bangladesh healthcare support assistant.
 
-      const geminiResponse = await fetch(geminiUrl, {
+Safety rules:
+- Do not diagnose.
+- Do not prescribe medicine.
+- Do not choose vaccine dose.
+- Do not replace doctors.
+- Do not claim certainty about medicine-vaccine incompatibility.
+- Only flag possible risks for authorized doctor or vaccination clinic review.
+- Keep the answer practical, short, and safe.
+`;
+
+      const userPrompt = `
+Task:
+${task}
+
+Child profile:
+${JSON.stringify(child, null, 2)}
+
+Vaccination records:
+${JSON.stringify(vaccinations, null, 2)}
+
+Patient records and medicines:
+${JSON.stringify(patientRecords, null, 2)}
+
+Due summary:
+${JSON.stringify(dueSummary, null, 2)}
+
+Local ML risk:
+${JSON.stringify(risk, null, 2)}
+`;
+
+      const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Authorization": `Bearer ${env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: mode === "reminder" ? 220 : 650
-          }
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          temperature: 0.2,
+          max_tokens: 650
         })
       });
 
-      const geminiJson = await geminiResponse.json();
+      const groqJson = await groqResponse.json();
 
-      if (!geminiResponse.ok) {
+      if (!groqResponse.ok) {
         return json({
           ok: false,
-          error: geminiJson?.error?.message || "Gemini API request failed.",
-          details: geminiJson
-        }, geminiResponse.status, corsHeaders);
+          success: false,
+          provider: "groq",
+          error: groqJson?.error?.message || "Groq API request failed.",
+          details: groqJson
+        }, groqResponse.status, corsHeaders);
       }
 
-      const text = extractText(geminiJson);
-      return json({ ok: true, mode, model, text }, 200, corsHeaders);
+      const text = groqJson?.choices?.[0]?.message?.content || "";
+
+      return json({
+        ok: true,
+        success: true,
+        provider: "groq",
+        model,
+        model_used: model,
+        text,
+        ai_response: text
+      }, 200, corsHeaders);
+
     } catch (error) {
-      return json({ ok: false, error: error.message || String(error) }, 500, corsHeaders);
+      return json({
+        ok: false,
+        success: false,
+        error: error.message || "Worker error"
+      }, 500, corsHeaders);
     }
   }
 };
 
-function buildPrompt(mode, child, vaccinations, healthRecords, risk) {
-  const safeChild = {
-    child_id: child.child_id,
-    child_name: child.child_name,
-    dob: child.dob,
-    area: child.area,
-    preferred_clinic: child.preferred_clinic,
-    opted_in_vaccination: child.opted_in_vaccination
-  };
-
-  const compactVaccinations = vaccinations.slice(0, 20).map((v) => ({
-    vaccine_name: v.vaccine_name,
-    due_date: v.due_date,
-    completed_date: v.completed_date,
-    status: v.status
-  }));
-
-  const compactHealth = healthRecords.slice(0, 20).map((r) => ({
-    hospital_name: r.hospital_name,
-    visit_date: r.visit_date,
-    diagnosis: r.diagnosis,
-    doctor_notes: r.doctor_notes,
-    medicine: r.medicine
-  }));
-
-  const sharedRules = `
-You are VaxID Bangladesh's child vaccination support assistant.
-Use ONLY the data provided.
-Do NOT diagnose disease.
-Do NOT prescribe medicine.
-Do NOT decide that a child needs a double dose or a special vaccine.
-If diagnosis/health records suggest fever, allergy, severe reaction, immune issues, seizure/convulsion, or uncertainty, say: "Doctor review required for vaccine timing/type/dose."
-The final decision must be made by an authorized doctor or vaccination clinic.
-Write in simple English suitable for a Bangladeshi parent/clinic worker.
-`;
-
-  if (mode === "reminder") {
-    return `${sharedRules}
-Task: Create ONE short SMS/text reminder under 320 characters.
-Include child name if available, next vaccine/due status if available, preferred clinic if available, and a doctor-review warning only if needed.
-Do not include JSON.
-
-Child: ${JSON.stringify(safeChild)}
-Vaccination records: ${JSON.stringify(compactVaccinations)}
-Hospital records: ${JSON.stringify(compactHealth)}
-ML risk result: ${JSON.stringify(risk)}
-`;
-  }
-
-  return `${sharedRules}
-Task: Create a safe AI health/vaccine review for the clinic dashboard.
-Include these headings:
-1. Summary
-2. ML missed-vaccine risk
-3. Hospital-record safety check
-4. Parent/clinic message
-5. Action needed
-Keep it under 220 words.
-
-Child: ${JSON.stringify(safeChild)}
-Vaccination records: ${JSON.stringify(compactVaccinations)}
-Hospital records: ${JSON.stringify(compactHealth)}
-ML risk result: ${JSON.stringify(risk)}
-`;
-}
-
-function extractText(geminiJson) {
-  const parts = geminiJson?.candidates?.[0]?.content?.parts || [];
-  const text = parts.map((p) => p.text || "").join("\n").trim();
-  return text || "Gemini returned no text.";
-}
-
-function json(data, status, headers) {
+function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data, null, 2), {
     status,
     headers: {
